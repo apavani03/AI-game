@@ -37,10 +37,10 @@ function modelLoaded(){
 function gotPoses(results){
   if(results.length > 0)
   {
-    console.log(results);
-//wristX = results[0].pose.wrist.x
-//wristY = results[0].pose.wrist.y
-//console.log("wristX = " + wristX +", wristY = " + wristY);
+     
+    wristX = results[0].pose.leftWrist.x;
+  wristY = results[0].pose.leftWrist.y;
+  console.log("wristX = " + wristX +", wristY = " + wristY);
   }
 }
 
