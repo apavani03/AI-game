@@ -22,9 +22,26 @@ var ball = {
 }
 
 function setup(){
-  var canvas =  createCanvas(700,600);
+   canvas =  createCanvas(650,400);
+   video=createCapture(VIDEO);
+   video.size(600,300)
+
+   poseNet = ml5.poseNet(video, modelLoaded);
+   poseNet.on('pose', gotPoses);
 }
 
+function modelLoaded(){
+  console.log('Model Loaded!');
+}
+
+function gotPoses(results){
+  if(results.length > 0)
+  {
+wristX = results[0].pose.wrist.x
+wristY = results[0].pose.wrist.y
+console.log("wristX = " + wristX +", wristY = " + wristY);
+  }
+}
 
 function draw(){
 
