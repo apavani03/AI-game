@@ -1,13 +1,15 @@
 
-/*created by prashant shukla */
+/*created by Sahasra */
+var game_status="";
 
+var wristX, wristY, wristScore;
 var paddle2 =10,paddle1=10;
 
 var paddle1X = 10,paddle1Height = 110;
 var paddle2Y = 685,paddle2Height = 70;
 
 var score1 = 0, score2 =0;
-var paddle1Y;
+var paddle1Y, paddle2Y;
 
 var  playerscore =0;
 var audio1;
@@ -20,16 +22,27 @@ var ball = {
     dx:3,
     dy:3
 }
+
+
+function play_game(){
+   game_status = "start";
+  document.getElementById("status").innerHTML= "Game is Loaded!";
+}
+
+
 function preload() {
-  paddle_touch_ball = loadSound("ball_touch_paddle.wave")
-  paddle_missed = loadSound("missed.wave")
+  paddle_touch_ball = loadSound("ball_touch_paddel.wav");
+  paddle_missed = loadSound("missed.wav");
   //remember to tell hetr that is not controlling with wrist and ask her for help
 }
 
 function setup(){
    canvas =  createCanvas(650,400);
+   canvas.parent('canvas');
    video=createCapture(VIDEO);
-   video.size(600,300)
+   video.size(600,300);
+   video.parent('game_console');
+   
 
    poseNet = ml5.poseNet(video, modelLoaded);
    poseNet.on('pose', gotPoses);
@@ -46,11 +59,15 @@ function gotPoses(results){
     wristX = results[0].pose.leftWrist.x;
   wristY = results[0].pose.leftWrist.y;
   console.log("wristX = " + wristX +", wristY = " + wristY);
+  console.log(results);
+  wristScore = results[0].pose.keypoints[9].score;
+
   }
 }
 
 function draw(){
-
+  if(game_status == "start") // inside the if condition check if the game_status is equal to the value "start".
+  {
  background(0); 
 
  fill("black");
@@ -61,6 +78,12 @@ function draw(){
  stroke("black");
  rect(0,0,20,700);
  
+
+ if (wristScore > 0.2){
+  fill("red");
+  stroke("red");
+  circle(wristX, wristY, 30);
+ }
    //funtion paddleInCanvas call 
    paddleInCanvas();
  
@@ -68,14 +91,15 @@ function draw(){
    fill(250,0,0);
     stroke(0,0,250);
     strokeWeight(0.5);
-   paddle1Y = mouseY; 
+   paddle1Y = wristY; 
    rect(paddle1X,paddle1Y,paddle1,paddle1Height,100);
    
    
     //pc computer paddle
     fill("#FFA500");
     stroke("#FFA500");
-   var paddle2y =ball.y-paddle2Height/2;  rect(paddle2Y,paddle2y,paddle2,paddle2Height,100);
+   paddle2y =ball.y-paddle2Height/2;  
+   rect(paddle2Y,paddle2y,paddle2,paddle2Height,100);
     
     //function midline call
     midline();
@@ -88,6 +112,8 @@ function draw(){
    
    //function move call which in very important
     move();
+
+  }
 }
 
 
@@ -140,9 +166,11 @@ function move(){
   if (ball.x-2.5*ball.r/2< 0){
   if (ball.y >= paddle1Y&& ball.y <= paddle1Y + paddle1Height) {
     ball.dx = -ball.dx+0.5; 
+    paddle_touch_ball.play();
   }
   else{
     pcscore++;
+    paddle_missed.play();
     reset();
     navigator.vibrate(100);
   }
