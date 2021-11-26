@@ -20,6 +20,11 @@ var ball = {
     dx:3,
     dy:3
 }
+function preload() {
+  paddle_touch_ball = loadSound("ball_touch_paddle.wave")
+  paddle_missed = loadSound("missed.wave")
+  //remember to tell hetr that is not controlling with wrist and ask her for help
+}
 
 function setup(){
    canvas =  createCanvas(650,400);
